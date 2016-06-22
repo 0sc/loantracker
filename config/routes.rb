@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  get "/callback/", to: "verify#webhock"
+  post "/callback/", to: "verify#webhock"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
