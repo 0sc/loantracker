@@ -36,9 +36,10 @@ class VerifyController < ApplicationController
     uri = 'https://graph.facebook.com/v2.6/me/messages'
     uri += '?access_token=' + token
 
-    Faraday.new(url: uri).post do |req|
+    conn = Faraday.new(url: uri).post do |req|
       req.body = message.to_json
       req.headers['Content-Type'] = 'application/json'
     end
+    puts conn
   end
 end
