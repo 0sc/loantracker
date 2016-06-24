@@ -38,7 +38,7 @@ class VerifyController < ApplicationController
     end
   end
 
-  def manage_debt(user, amount, debtor_name)
+  def manage_debt(debtor, amount, debtor_name)
     if debtor && debtor.amount >= amount
       debtor.amount -= amount
       debtor.save
