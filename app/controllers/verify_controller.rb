@@ -28,8 +28,23 @@ class VerifyController < ApplicationController
       return "success"
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
+    elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
+      debtor_name = $1
+      amount = $3
+      debtor = @user.debtors.find_by(name: debtor_name)
+      manage_debt(debtor, amount, debtor_name)
     else
       return "Invalid command: try x borrowed y"
+    end
+  end
+
+  def manage_debt(debtor, amount, debtor_name)
+    if debtor && debtor.amount.to_i >= amount.to_i
+      debtor.amount -= amount.to_f
+      debtor.save
+      "#{debtor.name} debt now #{debtor.amount}"
+    else
+      "#{debtor_name} does not exist or amount is invalid"
     end
   end
 
