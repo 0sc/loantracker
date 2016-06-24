@@ -2,7 +2,7 @@ class VerifyController < ApplicationController
   def webhock
     if params["object"] == "page"
       entry = params["entry"][0]
-      messaging = entry["messaging"]
+      messaging = entry["messaging"][0]
       @user_id = get_user(messaging)
       @message = get_message(messaging)
       process_message(@user_id, @message)
