@@ -18,6 +18,7 @@ class VerifyController < ApplicationController
   end
 
   def get_message(messaging)
+    puts messaging
     return messaging["message"]["text"]
   end
 
