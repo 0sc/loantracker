@@ -42,7 +42,7 @@ class VerifyController < ApplicationController
     puts debtor.amount
     puts amount
     if debtor && debtor.amount >= amount
-      debtor.amount -= amount
+      debtor.amount -= amount.to_i
       debtor.save
       "#{debtor.name} debt now #{debtor.amount}"
     else
