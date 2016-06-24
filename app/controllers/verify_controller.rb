@@ -41,5 +41,7 @@ class VerifyController < ApplicationController
       req.headers['Content-Type'] = 'application/json'
     end
     puts conn.body
+    puts user_id
+    puts message
   end
 end
