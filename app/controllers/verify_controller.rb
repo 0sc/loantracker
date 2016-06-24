@@ -14,6 +14,7 @@ class VerifyController < ApplicationController
   end
 
   def get_user(messaging)
+    puts messaging
     return messaging["sender"]["id"]
   end
 
