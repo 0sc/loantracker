@@ -6,20 +6,16 @@ class VerifyController < ApplicationController
         event_time = field["time"]
 
         field["messaging"].each do |message|
-          process_message(message)
+          msg = message["message"]
+          return unless msg
+
+          user_id = get_user(message)
+          process_message(user_id)
         end
       end
     end
 
     head 200
-  end
-
-  def process_message(message)
-    msg = message["message"]
-    return unless msg
-    
-    user_id = get_user(message)
-    process_message(user_id)
   end
 
   def get_user(messaging)
@@ -31,7 +27,7 @@ class VerifyController < ApplicationController
     # return messaging["message"]["text"]
   end
 
-  def process_message(user_id, message)
+  def process_message(user_id)
     # return "right"
     make_request(user_id, "working as expected #{@user_id}")
   end
