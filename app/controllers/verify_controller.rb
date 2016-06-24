@@ -1,15 +1,11 @@
 class VerifyController < ApplicationController
   def webhock
     if params["object"] == "page"
-      puts params["entry"]
-
-      params["entry"].each do |field|
-        field["messaging"].each do |messaging|
-          @user_id = get_user(messaging)
-          @message = get_message(messaging)
-          process_message(@user_id, @message)
-        end
-      end
+      entry = params["entry"][0]
+      messaging = entry["messaging"]
+      @user_id = get_user(messaging)
+      @message = get_message(messaging)
+      process_message(@user_id, @message)
     end
 
 
@@ -21,8 +17,8 @@ class VerifyController < ApplicationController
   end
 
   def get_message(messaging)
-    "working as expected"
-    # return messaging["message"]["text"]
+    # "working as expected"
+    return messaging["message"]["text"]
   end
 
   def process_message(user_id, message)
