@@ -3,8 +3,8 @@ class VerifyController < ApplicationController
     if params["object"] == "page"
       params["entry"].each do |field|
         # field["messaging"].each do |messaging|
-          @user_id = get_user(field["messaging"])
-          @message = get_message(field["messaging"])
+          @user_id = get_user(field["messaging"][0])
+          @message = get_message(field["messaging"][0])
           process_message(@user_id, @message)
         # end
       end
