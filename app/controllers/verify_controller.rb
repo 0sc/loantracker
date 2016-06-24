@@ -19,8 +19,8 @@ class VerifyController < ApplicationController
 
   def get_message(messaging)
     # puts "#{messaging} ERROR"
-    "working as expected"
-    # return messaging["message"]["text"]
+    # "working as expected"
+    return messaging["message"]["text"]
   end
 
   def process_message(user_id, message)
