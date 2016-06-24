@@ -28,8 +28,8 @@ class VerifyController < ApplicationController
 
   def make_request(user_id, message)
     message = {
-      recipient: { id: user_id},
-      message: { message: { text: message }}
+      recipient: { id: user_id },
+      message: { text: message }
     }
 
     token = ENV["facebook_token"]
