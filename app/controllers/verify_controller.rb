@@ -1,6 +1,8 @@
 class VerifyController < ApplicationController
   def webhock
     if params["object"] == "page"
+      puts params["entry"]
+
       params["entry"].each do |field|
         field["messaging"].each do |messaging|
           @user_id = get_user(messaging)
@@ -9,6 +11,7 @@ class VerifyController < ApplicationController
         end
       end
     end
+
 
     head 200
   end
