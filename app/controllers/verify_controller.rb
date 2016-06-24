@@ -1,14 +1,19 @@
 class VerifyController < ApplicationController
   def webhock
     if params["object"] == "page"
-      params["entry"].each do |field|
-        field["messaging"].each do |messaging|
-          @user_id = get_user(messaging)
-          @message = get_message(messaging)
-          process_message(@user_id, @message)
-        end
-      end
+      entry = params["entry"][0]
+
+      messaging = entry["messaging"][0]
+      @user_id = get_user(messaging)
+      @message = get_message(messaging)
+
+      puts entry["id"]
+      puts @user_id
+      puts entry["id"] == @user_id
+
+      process_message(@user_id, @message)
     end
+
 
     head 200
   end
@@ -18,18 +23,19 @@ class VerifyController < ApplicationController
   end
 
   def get_message(messaging)
-    return messaging["message"]["text"]
+    "working as expected"
+    # return messaging["message"]["text"]
   end
 
   def process_message(user_id, message)
     # return "right"
-    make_request(user_id, "working as expected")
+    make_request(user_id, "working as expected #{@user_id}")
   end
 
   def make_request(user_id, message)
     message = {
-      recipient: { id: user_id},
-      message: { message: { text: message }}
+      recipient: { id: user_id },
+      message: { text: message }
     }
 
     token = ENV["facebook_token"]
