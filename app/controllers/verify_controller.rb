@@ -26,9 +26,19 @@ class VerifyController < ApplicationController
       amount = $2
       @user.debtors.create(name: debtor, amount: amount)
       return "success"
+    elsif msg == "list debtors"
+      return list_debtors(@user.debtors)
     else
       return "Invalid command: try x borrowed y"
     end
+  end
+
+  def list_debtors(debtors)
+    all_debtors = []
+    debtors.each do |debtor|
+      all_debtors << "#{debtor.name} is owing #{debtor.amount}"
+    end
+    all_debtors.join("\n")
   end
 
   def get_user(messaging)
