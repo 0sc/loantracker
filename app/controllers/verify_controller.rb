@@ -10,7 +10,9 @@ class VerifyController < ApplicationController
           return unless msg
 
           user_id = get_user(message)
-          process_message(user_id)
+          @user = User.find_or_create_by(facebook_id: user_id)
+          response_msg = parse_message(msg["text"])
+          process_message(response_msg, user_id)
         end
       end
     end
@@ -18,18 +20,24 @@ class VerifyController < ApplicationController
     head 200
   end
 
+  def parse_message(msg)
+    if msg =~ /(\w+)\sborrowed\s(\d+)/
+      debtor = $1
+      amount = $2
+      @user.debtors.create(name: debtor, amount: amount)
+      return "success"
+    else
+      return "Invalid command: try x borrowed y"
+    end
+  end
+
   def get_user(messaging)
     return messaging["sender"]["id"]
   end
 
-  def get_message(messaging)
-    "working as expected"
-    # return messaging["message"]["text"]
-  end
-
-  def process_message(user_id)
+  def process_message(response_msg, user_id)
     # return "right"
-    make_request(user_id, "working as expected #{@user_id}")
+    make_request(user_id, response_msg)
   end
 
   def make_request(user_id, message)
