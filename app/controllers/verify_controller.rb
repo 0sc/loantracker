@@ -24,7 +24,7 @@ class VerifyController < ApplicationController
 
   def process_message(user_id, message)
     # return "right"
-    make_request(user_id, "working as expected")
+    make_request(user_id, "working as expected #{@user_id}")
   end
 
   def make_request(user_id, message)
