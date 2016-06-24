@@ -40,6 +40,6 @@ class VerifyController < ApplicationController
       req.body = message.to_json
       req.headers['Content-Type'] = 'application/json'
     end
-    puts conn
+    puts conn.body
   end
 end
