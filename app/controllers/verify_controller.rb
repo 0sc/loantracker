@@ -41,8 +41,8 @@ class VerifyController < ApplicationController
   def manage_debt(debtor, amount, debtor_name)
     puts debtor.amount.class
     puts amount.class
-    if debtor && debtor.amount >= amount
-      debtor.amount -= amount.to_i
+    if debtor && debtor.amount.to_i >= amount.to_i
+      debtor.amount -= amount.to_f
       debtor.save
       "#{debtor.name} debt now #{debtor.amount}"
     else
