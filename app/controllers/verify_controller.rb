@@ -21,11 +21,8 @@ class VerifyController < ApplicationController
   private
 
   def parse_message(msg)
-    if msg =~ /(\w+)\sborrowed\s(\d+)/
-      debtor = $1
-      amount = $2
-      old_debtor = Debtor.find_by(name: debtor)
-      manage_debtor(old_debtor, debtor, amount)
+    if msg =~ reminder_pattern
+      reminder(msg)
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
@@ -33,13 +30,16 @@ class VerifyController < ApplicationController
       amount = $3
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
-    elsif msg =~ reminder_pattern
-      reminder(msg)
+    elsif msg =~ /(\w+)\sborrowed\s(\d+)/
+      debtor = $1
+      amount = $2
+      old_debtor = Debtor.find_by(name: debtor)
+      manage_debtor(old_debtor, debtor, amount)
     elsif msg =~ /remove\s(\w+)/
       debtor_name = $1
       remove_debtor(debtor_name)
     else
-      return list_commands.join("\n")
+      list_commands.join("\n")
     end
   end
 
@@ -99,7 +99,7 @@ class VerifyController < ApplicationController
   end
 
   def get_user(messaging)
-    return messaging["sender"]["id"]
+    messaging["sender"]["id"]
   end
 
   def process_message(response_msg, user_id)
