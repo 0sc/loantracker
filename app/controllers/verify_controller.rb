@@ -4,11 +4,9 @@ class VerifyController < ApplicationController
       params["entry"].each do |field|
         page_id = field["id"]
         event_time = field["time"]
-
         field["messaging"].each do |message|
           msg = message["message"]
           return unless msg
-
           user_id = get_user(message)
           @user = User.find_or_create_by(facebook_id: user_id)
           response_msg = parse_message(msg["text"])
@@ -19,6 +17,8 @@ class VerifyController < ApplicationController
 
     head 200
   end
+
+  private
 
   def parse_message(msg)
     if msg =~ /(\w+)\sborrowed\s(\d+)/
@@ -33,6 +33,8 @@ class VerifyController < ApplicationController
       amount = $3
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
+    elsif msg =~ reminder_pattern
+      reminder(msg)
     elsif msg =~ /remove\s(\w+)/
       debtor_name = $1
       remove_debtor(debtor_name)
@@ -80,9 +82,11 @@ class VerifyController < ApplicationController
       "",
       "To list debtors use this: list debtors",
       "",
-      "To remove debtor use this:: remove <name>",
+      "To remove debtor use this: remove <name>",
       "",
-      "To deduct amount from loan use this:: <name> paid || refunded <amount>"
+      "To deduct amount from loan use this:: <name> paid || refunded <amount>",
+      "",
+      "To set reminder for debt use: <remind me in> [num_of_hrs] <hours that> [borrower's name] <borrowed> [amount]"
     ]
   end
 
@@ -99,7 +103,6 @@ class VerifyController < ApplicationController
   end
 
   def process_message(response_msg, user_id)
-    # return "right"
     make_request(user_id, response_msg)
   end
 
@@ -118,4 +121,19 @@ class VerifyController < ApplicationController
       req.headers['Content-Type'] = 'application/json'
     end
   end
+
+  def reminder(msg)
+    matched_grps = msg.scan(reminder_pattern).flatten
+    num_hrs = matched_grps[0]
+    details = { user_id: @user.id,
+                message: matched_grps[2]
+              }
+    ReminderWorker.perform_in("#{num_hrs}.hours", details)
+    "Your reminder has been set. Yippe!"
+  end
+
+  def reminder_pattern
+    /remind me in\s(\d+)\s?(hrs|hours)\sthat\s((\w+)\sborrowed\s(\d+))/
+  end
+
 end
