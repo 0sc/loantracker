@@ -33,8 +33,21 @@ class VerifyController < ApplicationController
       amount = $3
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
+    elsif msg =~ /remove\s(\w+)/
+      debtor_name = $1
+      remove_debtor(debtor_name)
     else
       return list_commands.join("\n")
+    end
+  end
+
+  def remove_debtor(debtor_name)
+    debtor = Debtor.find_by(name: debtor_name)
+    if debtor
+      debtor.destroy
+      "#{debtor_name} has been removed"
+    else
+      "#{debtor_name} is invalid or does not exist"
     end
   end
 
@@ -62,8 +75,10 @@ class VerifyController < ApplicationController
   def list_commands
     [
       "Invaliid command: try any of the following",
+      "",
       "Add new debtor: <name> borrowed <amount>",
       "List debtors: list debtors",
+      "Remove debtor: remove <name>",
       "Deduct refund from loan: <name> paid||refunded <amount>"
     ]
   end
