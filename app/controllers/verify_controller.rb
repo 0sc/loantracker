@@ -77,9 +77,12 @@ class VerifyController < ApplicationController
       "Invaliid command: try any of the following",
       "",
       "Add new debtor: <name> borrowed <amount>",
+      "",
       "List debtors: list debtors",
+      "",
       "Remove debtor: remove <name>",
-      "Deduct refund from loan: <name> paid||refunded <amount>"
+      "",
+      "Deduct refund from loan: <name> paid || refunded <amount>"
     ]
   end
 
