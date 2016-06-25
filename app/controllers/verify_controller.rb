@@ -24,8 +24,8 @@ class VerifyController < ApplicationController
     if msg =~ /(\w+)\sborrowed\s(\d+)/
       debtor = $1
       amount = $2
-      @user.debtors.create(name: debtor, amount: amount)
-      return "success"
+      old_debtor = Debtor.find_by(name: debtor)
+      manage_debtor(old_debtor, debtor, amount)
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
@@ -33,8 +33,32 @@ class VerifyController < ApplicationController
       amount = $3
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
+    elsif msg =~ /remove\s(\w+)/
+      debtor_name = $1
+      remove_debtor(debtor_name)
     else
       return list_commands.join("\n")
+    end
+  end
+
+  def remove_debtor(debtor_name)
+    debtor = Debtor.find_by(name: debtor_name)
+    if debtor
+      debtor.destroy
+      "#{debtor_name} has been removed"
+    else
+      "#{debtor_name} is invalid or does not exist"
+    end
+  end
+
+  def manage_debtor(old_debtor, debtor, amount)
+    if old_debtor
+      old_debtor.amount += amount.to_f
+      old_debtor.save
+      "#{old_debtor.name} is owing #{old_debtor.amount}"
+    else
+      new_debtor = @user.debtors.create(name: debtor, amount: amount)
+      "#{new_debtor.name} is owing #{new_debtor.amount}"
     end
   end
 
@@ -51,9 +75,14 @@ class VerifyController < ApplicationController
   def list_commands
     [
       "Invaliid command: try any of the following",
-      "Add new debtor: <name> borrowed <amount>",
-      "List debtors: list debtors",
-      "Deduct refund from loan: <name> paid||refunded <amount>"
+      "",
+      "To add new debtor use this: <name> borrowed <amount>",
+      "",
+      "To list debtors use this: list debtors",
+      "",
+      "To remove debtor use this:: remove <name>",
+      "",
+      "To deduct amount from loan use this:: <name> paid || refunded <amount>"
     ]
   end
 
