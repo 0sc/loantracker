@@ -86,8 +86,6 @@ class VerifyController < ApplicationController
     ]
   end
 
-  To add new debtor use this:
-
   def list_debtors(debtors)
     all_debtors = []
     debtors.each do |debtor|
