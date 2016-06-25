@@ -76,15 +76,17 @@ class VerifyController < ApplicationController
     [
       "Invaliid command: try any of the following",
       "",
-      "Add new debtor: <name> borrowed <amount>",
+      "To add new debtor use this: <name> borrowed <amount>",
       "",
-      "List debtors: list debtors",
+      "To list debtors use this: list debtors",
       "",
-      "Remove debtor: remove <name>",
+      "To remove debtor use this:: remove <name>",
       "",
-      "Deduct refund from loan: <name> paid || refunded <amount>"
+      "To deduct amount from loan use this:: <name> paid || refunded <amount>"
     ]
   end
+
+  To add new debtor use this:
 
   def list_debtors(debtors)
     all_debtors = []
