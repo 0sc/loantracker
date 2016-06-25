@@ -128,12 +128,12 @@ class VerifyController < ApplicationController
     details = { user_id: @user.id,
                 message: matched_grps[2]
               }
-    ReminderWorker.perform_in("#{num_hrs}.hours", details)
+    ReminderWorker.perform_in(num_hrs.to_i.minutes, details)
     "Your reminder has been set. Yippe!"
   end
 
   def reminder_pattern
-    /remind me in\s(\d+)\s?(hrs|hours)\sthat\s((\w+)\sborrowed\s(\d+))/
+    /remind me in\s(\d+)\s?(mins|minutes)\sthat\s((\w+)\sborrowed\s(\d+))/
   end
 
 end
