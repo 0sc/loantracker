@@ -25,7 +25,6 @@ class VerifyController < ApplicationController
       debtor = $1
       amount = $2
       old_debtor = Debtor.find_by(name: debtor)
-      puts old_debtor
       manage_debtor(old_debtor, debtor, amount)
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
@@ -41,7 +40,8 @@ class VerifyController < ApplicationController
 
   def manage_debtor(old_debtor, debtor, amount)
     if old_debtor
-      old_debtor.update(amount: amount.to_f)
+      old_debtor.amount += amount.to_f
+      old_debtor.save
       "#{old_debtor.name} is owing #{old_debtor.amount}"
     else
       new_debtor = @user.debtors.create(name: debtor, amount: amount)
