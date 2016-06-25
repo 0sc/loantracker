@@ -26,7 +26,6 @@ class VerifyController < ApplicationController
       amount = $2
       old_debtor = Debtor.find_by(name: debtor)
       manage_debtor(old_debtor, debtor, amount)
-      return "success"
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
