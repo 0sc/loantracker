@@ -25,6 +25,7 @@ class VerifyController < ApplicationController
       debtor = $1
       amount = $2
       old_debtor = Debtor.find_by(name: debtor)
+      puts old_debtor
       manage_debtor(old_debtor, debtor, amount)
     elsif msg == "list debtors"
       return list_debtors(@user.debtors)
