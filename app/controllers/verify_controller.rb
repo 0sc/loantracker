@@ -34,7 +34,7 @@ class VerifyController < ApplicationController
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
     else
-      return "Invalid command: try x borrowed y"
+      return list_commands.join("\n")
     end
   end
 
@@ -46,6 +46,15 @@ class VerifyController < ApplicationController
     else
       "#{debtor_name} does not exist or amount is invalid"
     end
+  end
+
+  def list_commands
+    [
+      "Invaliid command: try any of the following",
+      "Add new debtor: <name> borrowed <amount>",
+      "List debtors: list debtors",
+      "Deduct refund from loan: <name> paid||refunded <amount>"
+    ]
   end
 
   def list_debtors(debtors)
