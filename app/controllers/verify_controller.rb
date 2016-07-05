@@ -7,10 +7,10 @@ class VerifyController < ApplicationController
         field["messaging"].each do |message|
           msg = message["message"]
           return unless msg
-          user_id = get_user(message)
-          @user = User.find_or_create_by(facebook_id: user_id)
+          @fb_user_id = get_user(message)
+          @user = User.find_or_create_by(facebook_id: @fb_user_id)
           response_msg = parse_message(msg["text"])
-          process_message(response_msg, user_id)
+          process_message(response_msg, @fb_user_id)
         end
       end
     end
@@ -111,7 +111,6 @@ class VerifyController < ApplicationController
       recipient: { id: user_id },
       message: { text: message }
     }
-
     token = ENV["facebook_token"]
     uri = 'https://graph.facebook.com/v2.6/me/messages'
     uri += '?access_token=' + token
@@ -126,6 +125,7 @@ class VerifyController < ApplicationController
     matched_grps = msg.scan(reminder_pattern).flatten
     num_hrs = matched_grps[0]
     details = { user_id: @user.id,
+                fb_user_id: @fb_user_id,
                 message: matched_grps[2]
               }
     ReminderWorker.perform_in(num_hrs.to_i.minutes, details)
