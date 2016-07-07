@@ -9,7 +9,7 @@ class VerifyController < ApplicationController
           return unless msg
           @fb_user_id = get_user(message)
           @user = User.find_or_create_by(facebook_id: @fb_user_id)
-          response_msg = parse_message(msg["text"])
+          response_msg = parse_message(msg["text"].downcase.strip)
           process_message(@fb_user_id, response_msg)
         end
       end
@@ -23,7 +23,7 @@ class VerifyController < ApplicationController
   def parse_message(msg)
     if msg =~ Reminder.reminder_pattern
       Reminder.process_reminder(msg, @user.id, @fb_user_id)
-    elsif msg.downcase.strip == "list debtors"
+    elsif msg == "list debtors"
       list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
       debtor_name = $1
