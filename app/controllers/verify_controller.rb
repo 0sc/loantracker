@@ -91,11 +91,8 @@ class VerifyController < ApplicationController
   end
 
   def list_debtors(debtors)
-    all_debtors = []
-    debtors.each do |debtor|
-      all_debtors << "#{debtor.name} is owing #{debtor.amount}"
-    end
-    all_debtors.join("\n")
+    return "You don't have any debtor(s)" if debtors.empty?
+    debtors.map{|debtor| "#{debtor.name} is owing #{debtor.amount}"}.join("\n")
   end
 
   def get_user(messaging)
