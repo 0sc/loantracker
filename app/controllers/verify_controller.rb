@@ -30,7 +30,7 @@ class VerifyController < ApplicationController
       amount = $3
       debtor = @user.debtors.find_by(name: debtor_name)
       manage_debt(debtor, amount, debtor_name)
-    elsif msg =~ /(\w+)\sborrowed\s(\d+)/
+    elsif msg =~ /^(\w+)\sborrowed\s(\d+)$/
       debtor = $1
       amount = $2
       old_debtor = Debtor.find_by(name: debtor)
