@@ -1,10 +1,10 @@
 class Reminder
   class << self
-    def process_reminder(msg)
+    def process_reminder(msg, user_id, fb_id)
       matched_grps = msg.scan(reminder_pattern).flatten
       time_fig = matched_grps[0].to_i
-      details = { user_id: @user.id,
-                  fb_user_id: @fb_user_id,
+      details = { user_id: user_id,
+                  fb_user_id: fb_id,
                   message: matched_grps[2]
                 }
       set_reminder(time_fig, matched_grps[1], details)

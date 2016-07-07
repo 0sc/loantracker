@@ -22,7 +22,7 @@ class VerifyController < ApplicationController
 
   def parse_message(msg)
     if msg =~ Reminder.reminder_pattern
-      Reminder.process_reminder(msg)
+      Reminder.process_reminder(msg, @user.id, @fb_user_id)
     elsif msg.downcase.strip == "list debtors"
       list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
