@@ -10,7 +10,7 @@ class VerifyController < ApplicationController
           @fb_user_id = get_user(message)
           @user = User.find_or_create_by(facebook_id: @fb_user_id)
           response_msg = parse_message(msg["text"])
-          process_message(response_msg, @fb_user_id)
+          process_message(@fb_user_id, response_msg)
         end
       end
     end
@@ -21,10 +21,10 @@ class VerifyController < ApplicationController
   private
 
   def parse_message(msg)
-    if msg =~ reminder_pattern
-      reminder(msg)
-    elsif msg == "list debtors"
-      return list_debtors(@user.debtors)
+    if msg =~ Reminder.reminder_pattern
+      Reminder.process_reminder(msg)
+    elsif msg.downcase.strip == "list debtors"
+      list_debtors(@user.debtors)
     elsif msg =~ /(\w+)\s(refunded|paid)\s(\d+)/
       debtor_name = $1
       amount = $3
@@ -76,7 +76,7 @@ class VerifyController < ApplicationController
 
   def list_commands
     [
-      "Invaliid command: try any of the following",
+      "Invalid command: try any of the following",
       "",
       "To add new debtor use this: <name> borrowed <amount>",
       "",
@@ -86,7 +86,7 @@ class VerifyController < ApplicationController
       "",
       "To deduct amount from loan use this:: <name> paid || refunded <amount>",
       "",
-      "To set reminder for debt use: <remind me in> [num_of_hrs] <hours that> [borrower's name] <borrowed> [amount]"
+      "To set reminder for debt use: <remind me in> [time in digit e.g 5] [time category e.g mins, hours, days, weeks etc] <that> [borrower's name] <borrowed> [amount]"
     ]
   end
 
@@ -102,7 +102,7 @@ class VerifyController < ApplicationController
     messaging["sender"]["id"]
   end
 
-  def process_message(response_msg, user_id)
+  def process_message(user_id, response_msg)
     make_request(user_id, response_msg)
   end
 
@@ -119,33 +119,5 @@ class VerifyController < ApplicationController
       req.body = message.to_json
       req.headers['Content-Type'] = 'application/json'
     end
-  end
-
-  def reminder(msg)
-    matched_grps = msg.scan(reminder_pattern).flatten
-    time_fig = matched_grps[0].to_i
-    details = { user_id: @user.id,
-                fb_user_id: @fb_user_id,
-                message: matched_grps[2]
-              }
-    if span = time_span(time_fig, matched_grps[1])
-      ReminderWorker.perform_in(time_fig.send(span), details)
-      "Your reminder has been set. Yippe!"
-    else
-      "Your reminder can not be more than a year."
-    end
-  end
-
-  def reminder_pattern
-    /remind me in\s(\d+)\s?(min|minute|hr|hour|day|wk|week|month|yr|year)s?\sthat\s((\w+)\sborrowed\s(\d+))/
-  end
-
-  def time_span(fig, span)
-    return "years" if (fig == 1) && (span =~ /yr|year/)
-    return "months" if (fig < 13) && (span =~ /month/)
-    return "weeks" if (fig < 53) && (span =~ /wk|week/)
-    return "days" if (fig < 367) && (span =~ /day/)
-    return "hours" if (fig < 8785) && (span =~ /hr|hour/)
-    "minutes" if (fig < 527041) && (span =~ /min|minute/)
   end
 end
