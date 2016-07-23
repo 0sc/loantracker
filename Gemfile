@@ -14,6 +14,7 @@ gem "sinatra", :require => false
 group :development do
   gem 'spring'
   gem 'sqlite3'
+  gem 'pry'
 end
 
 group :production do
