@@ -6,6 +6,7 @@ gem 'rails', '4.2.6'
 gem 'rails-api'
 gem 'faraday'
 
+gem "figaro"
 gem "puma"
 gem "redis", "~> 3.3"
 gem "sidekiq"
@@ -14,7 +15,7 @@ gem "sinatra", :require => false
 group :development do
   gem 'spring'
   gem 'sqlite3'
-  gem 'pry'
+  gem 'pry-rails'
 end
 
 group :production do
